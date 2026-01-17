@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
-    <!-- Include the database -->
+    <!-- Include the database (QSO logs and non-sensitive settings) -->
     <include domain="database" path="." />
     <!-- Include shared preferences -->
     <include domain="sharedpref" path="." />
     <!-- Include datastore -->
     <include domain="file" path="datastore/" />
+
+    <!-- SECURITY: Exclude encrypted preferences containing API keys -->
+    <exclude domain="sharedpref" path="hamhub_secure_prefs.xml" />
+    <!-- Exclude the master key preferences -->
+    <exclude domain="sharedpref" path="__androidx_security_crypto_encrypted_prefs__.xml" />
 </full-backup-content>

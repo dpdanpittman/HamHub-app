@@ -31,6 +31,9 @@ vico = "2.0.0-alpha.19"
 # DataStore
 datastorePreferences = "1.1.1"
 
+# Security
+securityCrypto = "1.1.0-alpha06"
+
 # Testing
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -85,6 +88,9 @@ vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", ve
 
 # DataStore
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
+
+# Security
+security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }

@@ -127,6 +127,9 @@ dependencies {
     // DataStore
     implementation(libs.datastore.preferences)
 
+    // Security (for encrypted storage)
+    implementation(libs.security.crypto)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

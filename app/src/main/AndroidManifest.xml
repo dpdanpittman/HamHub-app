@@ -39,15 +39,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Handle ADIF file opens -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:mimeType="*/*" />
-                <data android:pathPattern=".*\\.adi" />
-                <data android:pathPattern=".*\\.adif" />
-            </intent-filter>
+            <!--
+                NOTE: ADIF file handling via intent-filter was removed for security reasons.
+                The app supports ADIF import via the file picker in Import/Export screen,
+                which is more secure than accepting file intents with broad MIME types.
+            -->
         </activity>
 
         <!-- FileProvider for sharing exported files -->

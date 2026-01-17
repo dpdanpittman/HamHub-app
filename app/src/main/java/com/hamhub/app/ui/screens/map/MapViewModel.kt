@@ -66,18 +66,19 @@ class MapViewModel @Inject constructor(
         return qsos
             .filter { it.gridSquare != null && GridSquareUtils.isValidGrid(it.gridSquare) }
             .mapNotNull { qso ->
-                val latLng = GridSquareUtils.gridToLatLng(qso.gridSquare!!)
-                latLng?.let {
-                    MapMarker(
-                        id = qso.id,
-                        callsign = qso.callsign,
-                        gridSquare = qso.gridSquare,
-                        latitude = it.latitude,
-                        longitude = it.longitude,
-                        band = qso.band,
-                        mode = qso.mode,
-                        date = qso.date
-                    )
+                qso.gridSquare?.let { grid ->
+                    GridSquareUtils.gridToLatLng(grid)?.let { latLng ->
+                        MapMarker(
+                            id = qso.id,
+                            callsign = qso.callsign,
+                            gridSquare = grid,
+                            latitude = latLng.latitude,
+                            longitude = latLng.longitude,
+                            band = qso.band,
+                            mode = qso.mode,
+                            date = qso.date
+                        )
+                    }
                 }
             }
     }

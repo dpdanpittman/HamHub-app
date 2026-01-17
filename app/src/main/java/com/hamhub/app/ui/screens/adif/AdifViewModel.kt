@@ -122,11 +122,25 @@ class AdifViewModel @Inject constructor(
     }
 
     private fun readFileFromUri(context: Context, uri: Uri): String {
+        // SECURITY: Check file size before reading to prevent memory exhaustion attacks
+        val fileSize = context.contentResolver.openFileDescriptor(uri, "r")?.use { fd ->
+            fd.statSize
+        } ?: 0L
+
+        if (fileSize > MAX_IMPORT_FILE_SIZE) {
+            throw Exception("File too large. Maximum size is ${MAX_IMPORT_FILE_SIZE / (1024 * 1024)}MB")
+        }
+
         val inputStream = context.contentResolver.openInputStream(uri)
             ?: throw Exception("Could not open file")
 
         return BufferedReader(InputStreamReader(inputStream)).use { reader ->
             reader.readText()
         }
+    }
+
+    companion object {
+        // Maximum ADIF file size: 50MB (typical log files are much smaller)
+        private const val MAX_IMPORT_FILE_SIZE = 50L * 1024L * 1024L
     }
 }

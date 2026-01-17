@@ -1,7 +1,5 @@
 package com.hamhub.app.ui.screens.contests
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hamhub.app.R
+import com.hamhub.app.util.SafeUrlOpener
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -135,7 +134,7 @@ fun ContestsScreen(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = uiState.error!!,
+                                text = uiState.error ?: "Unknown error",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.error
                             )
@@ -168,8 +167,7 @@ fun ContestsScreen(
                             ContestEventCard(
                                 event = event,
                                 onOpenUrl = { url ->
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                                    context.startActivity(intent)
+                                    SafeUrlOpener.openUrl(context, url)
                                 }
                             )
                         }

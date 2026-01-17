@@ -260,7 +260,7 @@ fun RepeatersScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = uiState.error!!,
+                                text = uiState.error ?: "Unknown error",
                                 style = MaterialTheme.typography.bodyMedium,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant

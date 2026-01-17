@@ -1,7 +1,5 @@
 package com.hamhub.app.ui.screens.news
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hamhub.app.R
+import com.hamhub.app.util.SafeUrlOpener
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -96,8 +95,7 @@ fun NewsScreen(
                         error = uiState.newsError,
                         onRetry = { viewModel.loadNews() },
                         onOpenUrl = { url ->
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            context.startActivity(intent)
+                            SafeUrlOpener.openUrl(context, url)
                         }
                     )
                     1 -> NewsListTab(
@@ -106,8 +104,7 @@ fun NewsScreen(
                         error = uiState.dxError,
                         onRetry = { viewModel.loadDxBulletins() },
                         onOpenUrl = { url ->
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                            context.startActivity(intent)
+                            SafeUrlOpener.openUrl(context, url)
                         }
                     )
                 }

@@ -72,7 +72,7 @@ fun PropagationScreen(
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = uiState.error!!,
+                            text = uiState.error ?: "Unknown error",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -83,7 +83,9 @@ fun PropagationScreen(
                     }
                 }
                 uiState.data != null -> {
-                    PropagationContent(data = uiState.data!!)
+                    uiState.data?.let { data ->
+                        PropagationContent(data = data)
+                    }
                 }
             }
         }

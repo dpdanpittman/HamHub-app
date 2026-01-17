@@ -27,7 +27,9 @@ object AppModule {
             HamHubDatabase::class.java,
             HamHubDatabase.DATABASE_NAME
         )
-            .fallbackToDestructiveMigration()
+            // NOTE: For future schema changes, add proper migrations here instead of
+            // using fallbackToDestructiveMigration() which would delete user data.
+            // Example: .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .build()
     }
 

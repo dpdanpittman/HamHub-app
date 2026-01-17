@@ -153,7 +153,7 @@ fun CallsignLookupScreen(
                                 tint = MaterialTheme.colorScheme.error
                             )
                             Text(
-                                text = uiState.error!!,
+                                text = uiState.error ?: "Unknown error",
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
                         }
@@ -161,12 +161,14 @@ fun CallsignLookupScreen(
                 }
 
                 uiState.result != null -> {
-                    CallsignResultCard(
-                        result = uiState.result!!,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    )
+                    uiState.result?.let { result ->
+                        CallsignResultCard(
+                            result = result,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                        )
+                    }
                 }
 
                 !uiState.hasSearched -> {

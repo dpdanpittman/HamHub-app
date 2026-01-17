@@ -14,15 +14,15 @@ class PropagationRepository @Inject constructor(
 ) {
     private var cachedData: PropagationData? = null
     private var lastFetchTime: Long = 0
-    private val cacheValidityMs = 15 * 60 * 1000L // 15 minutes
 
     suspend fun getPropagationData(forceRefresh: Boolean = false): Result<PropagationData> {
         return withContext(Dispatchers.IO) {
             try {
                 // Return cached data if valid
-                if (!forceRefresh && cachedData != null &&
-                    System.currentTimeMillis() - lastFetchTime < cacheValidityMs) {
-                    return@withContext Result.success(cachedData!!)
+                cachedData?.let { cached ->
+                    if (!forceRefresh && System.currentTimeMillis() - lastFetchTime < CACHE_VALIDITY_MS) {
+                        return@withContext Result.success(cached)
+                    }
                 }
 
                 val xmlData = propagationApi.getSolarData()
@@ -39,5 +39,10 @@ class PropagationRepository @Inject constructor(
                 } ?: Result.failure(e)
             }
         }
+    }
+
+    companion object {
+        // Cache propagation data for 15 minutes to reduce API calls
+        private const val CACHE_VALIDITY_MS = 15 * 60 * 1000L
     }
 }

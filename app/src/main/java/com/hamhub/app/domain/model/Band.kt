@@ -3,7 +3,7 @@ package com.hamhub.app.domain.model
 enum class Band(val display: String, val meters: String, val frequencyRange: String) {
     BAND_160M("160m", "160", "1.8-2.0 MHz"),
     BAND_80M("80m", "80", "3.5-4.0 MHz"),
-    BAND_60M("60m", "60", "5.3-5.4 MHz"),
+    BAND_60M("60m", "60", "5.330-5.403 MHz (channelized)"),
     BAND_40M("40m", "40", "7.0-7.3 MHz"),
     BAND_30M("30m", "30", "10.1-10.15 MHz"),
     BAND_20M("20m", "20", "14.0-14.35 MHz"),

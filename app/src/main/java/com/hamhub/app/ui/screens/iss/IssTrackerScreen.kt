@@ -94,7 +94,7 @@ fun IssTrackerScreen(
                     ) {
                         Text("Unable to track ISS", style = MaterialTheme.typography.titleMedium)
                         Text(
-                            text = uiState.error!!,
+                            text = uiState.error ?: "Unknown error",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.error
                         )

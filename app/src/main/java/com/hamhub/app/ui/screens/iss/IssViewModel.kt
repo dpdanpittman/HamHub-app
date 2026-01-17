@@ -39,9 +39,9 @@ class IssViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(IssUiState())
     val uiState: StateFlow<IssUiState> = _uiState.asStateFlow()
 
-    // Default observer location (center of USA - can be overridden)
-    private var observerLat = 39.8283
-    private var observerLng = -98.5795
+    // Default observer location (geographic center of USA - can be overridden)
+    private var observerLat = DEFAULT_OBSERVER_LAT
+    private var observerLng = DEFAULT_OBSERVER_LNG
 
     // Track the polling job to prevent duplicates
     private var trackingJob: Job? = null
@@ -72,7 +72,7 @@ class IssViewModel @Inject constructor(
         trackingJob = viewModelScope.launch {
             while (isActive) {
                 fetchPosition()
-                delay(10000) // Update every 10 seconds (N2YO has rate limits)
+                delay(POSITION_UPDATE_INTERVAL_MS)
             }
         }
     }
@@ -162,5 +162,14 @@ class IssViewModel @Inject constructor(
                 // Silently fail - passes are optional
             }
         }
+    }
+
+    companion object {
+        // Position update interval - N2YO API has rate limits, so 10 seconds is reasonable
+        private const val POSITION_UPDATE_INTERVAL_MS = 10_000L
+
+        // Geographic center of the contiguous United States (Kansas)
+        private const val DEFAULT_OBSERVER_LAT = 39.8283
+        private const val DEFAULT_OBSERVER_LNG = -98.5795
     }
 }
