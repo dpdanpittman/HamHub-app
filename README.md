@@ -79,7 +79,7 @@ Under the following terms:
 - **NonCommercial** - Not for commercial purposes
 - **ShareAlike** - Distribute contributions under the same license
 
-## Contributing
+## [Contributing](CONTRIBUTING.md)
 
 Contributions are welcome! Please ensure any contributions are compatible with the CC BY-NC-SA 4.0 license.
 
