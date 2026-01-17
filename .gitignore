@@ -71,6 +71,7 @@ ehthumbs.db
 
 # Signing config
 signing.properties
+keystore.properties
 
 # Environment variables
 .env

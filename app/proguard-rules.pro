@@ -49,6 +49,9 @@
 -dontwarn javax.annotation.**
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
+# Google Error Prone annotations (used by OkHttp/Retrofit at compile time)
+-dontwarn com.google.errorprone.annotations.**
+
 # Room
 -keep class * extends androidx.room.RoomDatabase
 -keep @androidx.room.Entity class *
