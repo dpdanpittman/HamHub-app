@@ -210,7 +210,7 @@ private fun OsmdroidMapView(
             // Refresh the map
             mapView.invalidate()
 
-            // If we have markers, zoom to fit them
+            // If we have markers, zoom to fit them (but cap at state-level view)
             if (markers.isNotEmpty()) {
                 val boundingBox = org.osmdroid.util.BoundingBox.fromGeoPoints(
                     markers.map { GeoPoint(it.latitude, it.longitude) }
@@ -218,6 +218,11 @@ private fun OsmdroidMapView(
                 mapView.post {
                     try {
                         mapView.zoomToBoundingBox(boundingBox, true, 50)
+                        // Cap zoom at state-level (7.0) so it doesn't zoom in too close
+                        // User can manually zoom in if they want more detail
+                        if (mapView.zoomLevelDouble > 7.0) {
+                            mapView.controller.setZoom(7.0)
+                        }
                     } catch (e: Exception) {
                         // Fallback if zoom fails
                         mapView.controller.setZoom(4.0)

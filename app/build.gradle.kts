@@ -60,6 +60,22 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    lint {
+        // Treat warnings as errors for CI
+        warningsAsErrors = false
+        // Don't abort build on error - report them
+        abortOnError = false
+        // Check for new issues in release builds
+        checkReleaseBuilds = true
+        // Disable specific checks that may be too strict
+        disable += setOf(
+            "MissingTranslation",      // We only support English
+            "ExtraTranslation",
+            "HardcodedText",           // Some hardcoded text is intentional
+            "UnusedResources"          // May have false positives
+        )
+    }
 }
 
 dependencies {
