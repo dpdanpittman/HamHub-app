@@ -79,7 +79,11 @@ Under the following terms:
 - **NonCommercial** - Not for commercial purposes
 - **ShareAlike** - Distribute contributions under the same license
 
-## Contributing
+## Privacy
+
+HamHub respects your privacy. All data is stored locally on your device. See our [Privacy Policy](PRIVACY_POLICY.md) for details.
+
+## [Contributing](CONTRIBUTING.md)
 
 Contributions are welcome! Please ensure any contributions are compatible with the CC BY-NC-SA 4.0 license.
 

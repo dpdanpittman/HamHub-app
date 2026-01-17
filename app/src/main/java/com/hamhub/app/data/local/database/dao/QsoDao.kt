@@ -101,7 +101,7 @@ interface QsoDao {
 
     // Grid square queries
     @Query("""
-        SELECT grid_square,
+        SELECT grid_square AS gridSquare,
                COUNT(*) as worked,
                SUM(CASE WHEN qsl_received = 1 THEN 1 ELSE 0 END) as confirmed
         FROM qsos

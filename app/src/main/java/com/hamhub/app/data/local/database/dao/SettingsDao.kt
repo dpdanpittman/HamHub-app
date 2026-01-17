@@ -42,5 +42,6 @@ interface SettingsDao {
         const val KEY_DEFAULT_POWER = "default_power"
         const val KEY_DEFAULT_MODE = "default_mode"
         const val KEY_DEFAULT_BAND = "default_band"
+        const val KEY_N2YO_API_KEY = "n2yo_api_key"
     }
 }

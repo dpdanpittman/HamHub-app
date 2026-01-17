@@ -7,11 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.filled.MenuBook
-import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -55,11 +55,11 @@ fun HamHubApp() {
     val navController = rememberNavController()
 
     val bottomNavItems = listOf(
-        BottomNavItem(Screen.Logbook, R.string.nav_logbook, Icons.Default.MenuBook),
-        BottomNavItem(Screen.Dashboard, R.string.nav_dashboard, Icons.Default.Home),
-        BottomNavItem(Screen.Awards, R.string.nav_awards, Icons.Default.EmojiEvents),
+        BottomNavItem(Screen.Home, R.string.nav_home, Icons.Default.Home),
+        BottomNavItem(Screen.Dashboard, R.string.nav_dashboard, Icons.Default.Dashboard),
+        BottomNavItem(Screen.Logbook, R.string.nav_logbook, Icons.AutoMirrored.Filled.MenuBook),
         BottomNavItem(Screen.Map, R.string.nav_map, Icons.Default.Map),
-        BottomNavItem(Screen.More, R.string.nav_more, Icons.Default.MoreHoriz)
+        BottomNavItem(Screen.Awards, R.string.nav_awards, Icons.Default.EmojiEvents)
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
