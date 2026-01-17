@@ -47,18 +47,27 @@ fun SettingsScreen(
                     }
                 },
                 actions = {
-                    IconButton(
+                    Button(
                         onClick = { viewModel.saveSettings() },
-                        enabled = !uiState.isSaving
+                        enabled = !uiState.isSaving,
+                        modifier = Modifier.padding(end = 8.dp)
                     ) {
                         if (uiState.isSaving) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                strokeWidth = 2.dp
+                                modifier = Modifier.size(16.dp),
+                                strokeWidth = 2.dp,
+                                color = MaterialTheme.colorScheme.onPrimary
                             )
+                            Spacer(modifier = Modifier.width(8.dp))
                         } else {
-                            Icon(Icons.Default.Save, contentDescription = "Save")
+                            Icon(
+                                Icons.Default.Save,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
                         }
+                        Text("Save")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

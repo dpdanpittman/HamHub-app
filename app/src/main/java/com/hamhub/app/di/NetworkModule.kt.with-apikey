@@ -27,7 +27,6 @@ object NetworkModule {
     private val json = Json {
         ignoreUnknownKeys = true
         coerceInputValues = true
-        isLenient = true
     }
 
     @Provides
@@ -49,10 +48,8 @@ object NetworkModule {
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .addInterceptor { chain ->
-                // Match the exact headers used by the webapp server
                 val request = chain.request().newBuilder()
-                    .header("User-Agent", "HamHub/1.0 (Amateur Radio Station Management, contact@hamhub.app)")
-                    .header("Accept", "application/json")
+                    .header("User-Agent", "HamHub Android App/1.0 (https://github.com/dpdanpittman/HamHub-app)")
                     .build()
                 chain.proceed(request)
             }
