@@ -1,6 +1,6 @@
 # Privacy Policy for HamHub
 
-**Last Updated:** January 2025
+**Last Updated:** January 17, 2025
 
 ## Overview
 
@@ -22,14 +22,16 @@ HamHub stores all user data locally on your device. This includes:
 
 HamHub connects to the following external services to provide real-time information:
 
-| Service | Data Retrieved | Purpose |
-|---------|---------------|---------|
-| Callook.info | Callsign license information | Callsign lookup feature |
-| RepeaterBook.com | Repeater database | Repeater search feature |
-| HamQSL.com | Solar/propagation data | Propagation conditions display |
-| Open-Notify.org | ISS position | ISS tracker feature |
+| Service | Data Retrieved | Data Sent | Purpose |
+|---------|---------------|-----------|---------|
+| Callook.info | Callsign license information | Callsign query | Callsign lookup feature |
+| RepeaterBook.com | Repeater database | Location/frequency search | Repeater search feature |
+| HamQSL.com | Solar/propagation data | None | Propagation conditions display |
+| N2YO.com | ISS position and passes | Observer coordinates, API key | ISS tracker feature |
+| ARRL.org | News RSS feed | None | Amateur radio news |
+| Contest Calendar | Contest schedule | None | Upcoming contests list |
 
-**We do not send any of your personal data to these services.** Only search queries (like callsigns or locations you're looking up) are transmitted.
+**We do not send any of your personal data to these services.** Only search queries (like callsigns or locations you're looking up) are transmitted. The N2YO service requires a user-provided API key which you obtain directly from n2yo.com.
 
 ## Information We Do NOT Collect
 
@@ -42,8 +44,8 @@ HamHub connects to the following external services to provide real-time informat
 
 ## Data Storage and Security
 
-- All data is stored locally on your device using Android's secure storage mechanisms
-- Data is stored in an encrypted SQLite database
+- All data is stored locally on your device using Android's Room database
+- Data is stored in a SQLite database in the app's private storage directory
 - You can export your data at any time using ADIF format
 - You can delete all data through the Settings screen
 
@@ -66,13 +68,11 @@ We may update this privacy policy from time to time. We will notify users of any
 
 ## Open Source
 
-HamHub is open source software licensed under CC BY-NC-SA 4.0. You can review the complete source code at:
-https://github.com/dpdanpittman/HamHub-app
+HamHub is open source software licensed under CC BY-NC-SA 4.0. You can review the complete source code on our GitHub repository.
 
 ## Contact
 
-For privacy-related questions or concerns, please open an issue on our GitHub repository:
-https://github.com/dpdanpittman/HamHub-app/issues
+For privacy-related questions or concerns, please open an issue on our GitHub repository.
 
 ## Summary
 
