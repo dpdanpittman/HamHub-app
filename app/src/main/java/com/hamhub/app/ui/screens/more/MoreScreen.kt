@@ -42,7 +42,7 @@ fun MoreScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("More") },
+                title = { Text("Home") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
