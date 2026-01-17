@@ -1,6 +1,6 @@
 package com.hamhub.app.domain.util
 
-import com.hamhub.app.data.local.database.entity.QsoEntity
+import com.hamhub.app.data.local.entity.QsoEntity
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

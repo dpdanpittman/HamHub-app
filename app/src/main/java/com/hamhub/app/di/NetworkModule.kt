@@ -4,7 +4,6 @@ import com.hamhub.app.data.remote.api.CallookApi
 import com.hamhub.app.data.remote.api.IssApi
 import com.hamhub.app.data.remote.api.PropagationApi
 import com.hamhub.app.data.remote.api.RepeaterBookApi
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,6 +11,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit

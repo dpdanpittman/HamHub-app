@@ -1,7 +1,7 @@
 package com.hamhub.app.data.repository
 
 import com.hamhub.app.data.local.database.dao.QsoDao
-import com.hamhub.app.data.local.database.entity.QsoEntity
+import com.hamhub.app.data.local.entity.QsoEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -12,29 +12,21 @@ class QsoRepository @Inject constructor(
 ) {
     fun getAllQsos(): Flow<List<QsoEntity>> = qsoDao.getAllQsos()
 
-    fun getQsoById(id: Long): Flow<QsoEntity?> = qsoDao.getQsoById(id)
+    suspend fun getQsoById(id: Long): QsoEntity? = qsoDao.getQsoById(id)
 
-    fun searchQsos(query: String): Flow<List<QsoEntity>> = qsoDao.searchQsos(query)
+    suspend fun getQsosFiltered(
+        band: String? = null,
+        mode: String? = null,
+        callsign: String? = null,
+        startDate: String? = null,
+        endDate: String? = null,
+        limit: Int = 100,
+        offset: Int = 0
+    ): List<QsoEntity> = qsoDao.getQsosFiltered(band, mode, callsign, startDate, endDate, limit, offset)
 
-    fun getQsosByBand(band: String): Flow<List<QsoEntity>> = qsoDao.getQsosByBand(band)
+    suspend fun getQsoCount(): Int = qsoDao.getQsoCount()
 
-    fun getQsosByMode(mode: String): Flow<List<QsoEntity>> = qsoDao.getQsosByMode(mode)
-
-    fun getQsosByDateRange(startDate: String, endDate: String): Flow<List<QsoEntity>> =
-        qsoDao.getQsosByDateRange(startDate, endDate)
-
-    fun getQsosByBandAndMode(band: String, mode: String): Flow<List<QsoEntity>> =
-        qsoDao.getQsosByBandAndMode(band, mode)
-
-    suspend fun insertQso(qso: QsoEntity): Long = qsoDao.insertQso(qso)
-
-    suspend fun updateQso(qso: QsoEntity) = qsoDao.updateQso(qso)
-
-    suspend fun deleteQso(qso: QsoEntity) = qsoDao.deleteQso(qso)
-
-    suspend fun deleteQsoById(id: Long) = qsoDao.deleteQsoById(id)
-
-    suspend fun getTotalQsoCount(): Int = qsoDao.getTotalQsoCount()
+    fun getQsoCountFlow(): Flow<Int> = qsoDao.getQsoCountFlow()
 
     suspend fun getUniqueCallsignCount(): Int = qsoDao.getUniqueCallsignCount()
 
@@ -42,10 +34,31 @@ class QsoRepository @Inject constructor(
 
     suspend fun getUniqueGridCount(): Int = qsoDao.getUniqueGridCount()
 
-    suspend fun checkDuplicate(
+    suspend fun getConfirmedQsoCount(): Int = qsoDao.getConfirmedQsoCount()
+
+    suspend fun findDuplicate(
         callsign: String,
+        date: String,
         band: String,
-        mode: String,
-        date: String
-    ): QsoEntity? = qsoDao.checkDuplicate(callsign, band, mode, date)
+        mode: String
+    ): QsoEntity? = qsoDao.findDuplicate(callsign, date, band, mode)
+
+    suspend fun insertQso(qso: QsoEntity): Long = qsoDao.insertQso(qso)
+
+    suspend fun insertQsos(qsos: List<QsoEntity>): List<Long> = qsoDao.insertQsos(qsos)
+
+    suspend fun updateQso(qso: QsoEntity) = qsoDao.updateQso(qso)
+
+    suspend fun deleteQso(qso: QsoEntity) = qsoDao.deleteQso(qso)
+
+    suspend fun deleteQsoById(id: Long) = qsoDao.deleteQsoById(id)
+
+    suspend fun deleteAllQsos() = qsoDao.deleteAllQsos()
+
+    suspend fun getQsosForExport(
+        startDate: String? = null,
+        endDate: String? = null,
+        band: String? = null,
+        mode: String? = null
+    ): List<QsoEntity> = qsoDao.getQsosForExport(startDate, endDate, band, mode)
 }

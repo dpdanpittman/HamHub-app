@@ -110,13 +110,13 @@ fun HorizontalBarChart(
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            displayData.chunked(2).forEach { row ->
+            displayData.chunked(2).forEachIndexed { chunkIndex, row ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     row.forEachIndexed { idx, (label, value) ->
-                        val globalIndex = displayData.indexOf(label to value)
+                        val globalIndex = chunkIndex * 2 + idx
                         val color = colors[globalIndex % colors.size]
                         Row(
                             modifier = Modifier.weight(1f),

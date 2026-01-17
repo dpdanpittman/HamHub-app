@@ -48,14 +48,14 @@ class SettingsViewModel @Inject constructor(
                 settingsRepository.getDefaultPowerFlow(),
                 settingsRepository.getDefaultModeFlow(),
                 settingsRepository.getDefaultBandFlow()
-            ) { callsign, grid, theme, power, mode, band ->
+            ) { values: Array<Any?> ->
                 SettingsUiState(
-                    myCallsign = callsign ?: "",
-                    myGrid = grid ?: "",
-                    theme = theme ?: "system",
-                    defaultPower = power?.toString() ?: "",
-                    defaultMode = mode ?: "",
-                    defaultBand = band ?: "",
+                    myCallsign = (values[0] as? String) ?: "",
+                    myGrid = (values[1] as? String) ?: "",
+                    theme = (values[2] as? String) ?: "system",
+                    defaultPower = (values[3] as? Int)?.toString() ?: "",
+                    defaultMode = (values[4] as? String) ?: "",
+                    defaultBand = (values[5] as? String) ?: "",
                     isLoading = false
                 )
             }.collect { state ->

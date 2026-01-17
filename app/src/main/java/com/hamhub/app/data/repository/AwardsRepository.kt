@@ -1,6 +1,7 @@
 package com.hamhub.app.data.repository
 
 import com.hamhub.app.data.local.database.dao.QsoDao
+import com.hamhub.app.data.local.entity.QsoEntity
 import com.hamhub.app.domain.model.UsState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -81,7 +82,7 @@ class AwardsRepository @Inject constructor(
         }
     }
 
-    private fun calculateDxccProgress(qsos: List<com.hamhub.app.data.local.database.entity.QsoEntity>): DxccProgress {
+    private fun calculateDxccProgress(qsos: List<QsoEntity>): DxccProgress {
         val countriesWorked = qsos.mapNotNull { it.country?.uppercase() }.toSet()
         val countriesConfirmed = qsos.filter { it.qslReceived }.mapNotNull { it.country?.uppercase() }.toSet()
 
@@ -114,7 +115,7 @@ class AwardsRepository @Inject constructor(
         )
     }
 
-    private fun calculateWasProgress(qsos: List<com.hamhub.app.data.local.database.entity.QsoEntity>): WasProgress {
+    private fun calculateWasProgress(qsos: List<QsoEntity>): WasProgress {
         val statesWorked = qsos
             .mapNotNull { it.state?.uppercase() }
             .filter { UsState.fromCode(it) != null }
@@ -138,7 +139,7 @@ class AwardsRepository @Inject constructor(
         )
     }
 
-    private fun calculateGridProgress(qsos: List<com.hamhub.app.data.local.database.entity.QsoEntity>): GridProgress {
+    private fun calculateGridProgress(qsos: List<QsoEntity>): GridProgress {
         // Use 4-character grid (e.g., "FN31")
         val gridsWorked = qsos
             .mapNotNull { it.gridSquare?.take(4)?.uppercase() }

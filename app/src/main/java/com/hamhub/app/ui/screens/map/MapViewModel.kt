@@ -2,7 +2,7 @@ package com.hamhub.app.ui.screens.map
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hamhub.app.data.local.database.entity.QsoEntity
+import com.hamhub.app.data.local.entity.QsoEntity
 import com.hamhub.app.data.repository.QsoRepository
 import com.hamhub.app.domain.util.GridSquareUtils
 import dagger.hilt.android.lifecycle.HiltViewModel

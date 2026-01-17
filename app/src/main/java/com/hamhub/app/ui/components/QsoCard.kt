@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.hamhub.app.data.local.database.entity.QsoEntity
+import com.hamhub.app.data.local.entity.QsoEntity
 
 @Composable
 fun QsoCard(

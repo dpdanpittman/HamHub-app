@@ -2,12 +2,11 @@ package com.hamhub.app.ui.screens.logbook
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hamhub.app.data.local.database.entity.QsoEntity
+import com.hamhub.app.data.local.entity.QsoEntity
 import com.hamhub.app.data.repository.QsoRepository
 import com.hamhub.app.domain.model.Band
 import com.hamhub.app.domain.model.Mode
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -120,23 +119,36 @@ class LogbookViewModel @Inject constructor(
         loadQsos()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun loadQsos() {
         viewModelScope.launch {
             combine(
+                qsoRepository.getAllQsos(),
                 searchQuery,
                 bandFilter,
                 modeFilter
-            ) { query, band, mode ->
-                Triple(query, band, mode)
-            }.flatMapLatest { (query, band, mode) ->
-                when {
-                    query.isNotBlank() -> qsoRepository.searchQsos(query)
-                    band != null && mode != null -> qsoRepository.getQsosByBandAndMode(band, mode)
-                    band != null -> qsoRepository.getQsosByBand(band)
-                    mode != null -> qsoRepository.getQsosByMode(mode)
-                    else -> qsoRepository.getAllQsos()
+            ) { allQsos, query, band, mode ->
+                var filtered = allQsos
+
+                // Apply search filter
+                if (query.isNotBlank()) {
+                    filtered = filtered.filter {
+                        it.callsign.contains(query, ignoreCase = true) ||
+                        it.name?.contains(query, ignoreCase = true) == true ||
+                        it.notes?.contains(query, ignoreCase = true) == true
+                    }
                 }
+
+                // Apply band filter
+                if (band != null) {
+                    filtered = filtered.filter { it.band == band }
+                }
+
+                // Apply mode filter
+                if (mode != null) {
+                    filtered = filtered.filter { it.mode == mode }
+                }
+
+                filtered
             }.collect { qsos ->
                 _uiState.update {
                     it.copy(
@@ -183,7 +195,7 @@ class LogbookViewModel @Inject constructor(
 
     fun loadQsoForEdit(qsoId: Long) {
         viewModelScope.launch {
-            qsoRepository.getQsoById(qsoId).firstOrNull()?.let { qso ->
+            qsoRepository.getQsoById(qsoId)?.let { qso ->
                 _formState.value = QsoFormState.fromEntity(qso)
             }
         }
@@ -198,11 +210,11 @@ class LogbookViewModel @Inject constructor(
 
         // Check for duplicate (only for new QSOs)
         if (existingId == null) {
-            val duplicate = qsoRepository.checkDuplicate(
+            val duplicate = qsoRepository.findDuplicate(
                 callsign = currentForm.callsign.uppercase().trim(),
+                date = currentForm.date,
                 band = currentForm.band,
-                mode = currentForm.mode,
-                date = currentForm.date
+                mode = currentForm.mode
             )
             if (duplicate != null) {
                 _uiState.update { it.copy(duplicateWarning = duplicate) }

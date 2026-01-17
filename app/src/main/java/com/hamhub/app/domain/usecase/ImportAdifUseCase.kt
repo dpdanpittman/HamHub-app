@@ -26,11 +26,11 @@ class ImportAdifUseCase @Inject constructor(
         parseResult.qsos.forEach { qso ->
             try {
                 if (skipDuplicates) {
-                    val existing = qsoRepository.checkDuplicate(
+                    val existing = qsoRepository.findDuplicate(
                         callsign = qso.callsign,
+                        date = qso.date,
                         band = qso.band,
-                        mode = qso.mode,
-                        date = qso.date
+                        mode = qso.mode
                     )
                     if (existing != null) {
                         duplicatesSkipped++

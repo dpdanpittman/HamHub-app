@@ -166,9 +166,9 @@ fun SettingsScreen(
                         ) {
                             Mode.entries.forEach { mode ->
                                 DropdownMenuItem(
-                                    text = { Text(mode.displayName) },
+                                    text = { Text(mode.display) },
                                     onClick = {
-                                        viewModel.updateDefaultMode(mode.name)
+                                        viewModel.updateDefaultMode(mode.display)
                                         modeExpanded = false
                                     }
                                 )
@@ -205,9 +205,9 @@ fun SettingsScreen(
                         ) {
                             Band.entries.forEach { band ->
                                 DropdownMenuItem(
-                                    text = { Text(band.displayName) },
+                                    text = { Text(band.display) },
                                     onClick = {
-                                        viewModel.updateDefaultBand(band.name)
+                                        viewModel.updateDefaultBand(band.display)
                                         bandExpanded = false
                                     }
                                 )

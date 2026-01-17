@@ -1,7 +1,7 @@
 package com.hamhub.app.data.repository
 
 import com.hamhub.app.data.local.database.dao.QsoDao
-import com.hamhub.app.data.local.database.entity.QsoEntity
+import com.hamhub.app.data.local.entity.QsoEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -96,7 +96,7 @@ class StatsRepository @Inject constructor(
         )
     }
 
-    suspend fun getTotalQsoCount(): Int = qsoDao.getTotalQsoCount()
+    suspend fun getTotalQsoCount(): Int = qsoDao.getQsoCount()
 
     suspend fun getUniqueCallsignCount(): Int = qsoDao.getUniqueCallsignCount()
 
