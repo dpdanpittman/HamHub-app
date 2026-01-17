@@ -7,6 +7,7 @@ import com.hamhub.app.data.remote.dto.N2yoPass
 import com.hamhub.app.data.repository.SettingsRepository
 import com.hamhub.app.domain.util.GridSquareUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,6 +43,9 @@ class IssViewModel @Inject constructor(
     private var observerLat = 39.8283
     private var observerLng = -98.5795
 
+    // Track the polling job to prevent duplicates
+    private var trackingJob: Job? = null
+
     init {
         checkApiKeyAndStart()
     }
@@ -63,7 +67,9 @@ class IssViewModel @Inject constructor(
     }
 
     private fun startTracking() {
-        viewModelScope.launch {
+        // Cancel any existing tracking job to prevent duplicates
+        trackingJob?.cancel()
+        trackingJob = viewModelScope.launch {
             while (isActive) {
                 fetchPosition()
                 delay(10000) // Update every 10 seconds (N2YO has rate limits)

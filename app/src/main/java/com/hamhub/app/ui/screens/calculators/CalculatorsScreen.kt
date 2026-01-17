@@ -1,5 +1,6 @@
 package com.hamhub.app.ui.screens.calculators
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -20,7 +21,7 @@ import com.hamhub.app.R
 import com.hamhub.app.domain.util.AntennaCalculations
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CalculatorsScreen(
     onBack: () -> Unit

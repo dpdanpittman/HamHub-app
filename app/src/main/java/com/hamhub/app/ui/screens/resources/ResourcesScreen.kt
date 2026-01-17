@@ -1,5 +1,6 @@
 package com.hamhub.app.ui.screens.resources
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,7 +24,7 @@ import com.hamhub.app.R
 import com.hamhub.app.domain.model.ResourcesData
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ResourcesScreen(
     onBack: () -> Unit
@@ -221,7 +222,7 @@ private fun MorseCodeTab() {
 private fun MorseGrid(items: List<Pair<String, String>>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
-        modifier = Modifier.height((items.size / 4 + 1) * 60.dp),
+        modifier = Modifier.height(((items.size / 4 + 1) * 60).dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         userScrollEnabled = false
@@ -456,7 +457,7 @@ private fun PhoneticsTab() {
 private fun PhoneticGrid(items: List<com.hamhub.app.domain.model.PhoneticEntry>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
-        modifier = Modifier.height((items.size / 3 + 1) * 64.dp),
+        modifier = Modifier.height(((items.size / 3 + 1) * 64).dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         userScrollEnabled = false

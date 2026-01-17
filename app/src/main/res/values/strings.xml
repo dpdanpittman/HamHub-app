@@ -3,6 +3,7 @@
     <string name="app_name">HamHub</string>
 
     <!-- Navigation -->
+    <string name="nav_home">Home</string>
     <string name="nav_logbook">Logbook</string>
     <string name="nav_dashboard">Dashboard</string>
     <string name="nav_awards">Awards</string>
@@ -18,6 +19,7 @@
     <string name="nav_other_services">Other Services</string>
     <string name="nav_contests">Contests</string>
     <string name="nav_news">News</string>
+    <string name="nav_guide">Getting Started</string>
     <string name="nav_settings">Settings</string>
 
     <!-- QSO Fields -->

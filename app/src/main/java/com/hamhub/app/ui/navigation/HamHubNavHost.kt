@@ -25,6 +25,7 @@ import com.hamhub.app.ui.screens.otherservices.OtherServicesScreen
 import com.hamhub.app.ui.screens.calculators.CalculatorsScreen
 import com.hamhub.app.ui.screens.contests.ContestsScreen
 import com.hamhub.app.ui.screens.news.NewsScreen
+import com.hamhub.app.ui.screens.guide.GuideScreen
 import com.hamhub.app.ui.screens.settings.SettingsScreen
 
 @Composable
@@ -34,7 +35,7 @@ fun HamHubNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Logbook.route,
+        startDestination = Screen.Home.route,
         modifier = modifier
     ) {
         // Main screens
@@ -57,7 +58,7 @@ fun HamHubNavHost(
             MapScreen()
         }
 
-        composable(Screen.More.route) {
+        composable(Screen.Home.route) {
             MoreScreen(
                 onNavigate = { screen -> navController.navigate(screen.route) }
             )
@@ -132,6 +133,12 @@ fun HamHubNavHost(
 
         composable(Screen.News.route) {
             NewsScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Guide.route) {
+            GuideScreen(
                 onBack = { navController.popBackStack() }
             )
         }
