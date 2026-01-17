@@ -76,4 +76,13 @@ class SettingsRepository @Inject constructor(
     suspend fun setN2yoApiKey(apiKey: String) {
         settingsDao.setSetting(SettingsDao.KEY_N2YO_API_KEY, apiKey.trim())
     }
+
+    // RepeaterBook API Key
+    suspend fun getRepeaterBookApiKey(): String? = settingsDao.getSettingValue(SettingsDao.KEY_REPEATERBOOK_API_KEY)
+
+    fun getRepeaterBookApiKeyFlow(): Flow<String?> = settingsDao.getSettingValueFlow(SettingsDao.KEY_REPEATERBOOK_API_KEY)
+
+    suspend fun setRepeaterBookApiKey(apiKey: String) {
+        settingsDao.setSetting(SettingsDao.KEY_REPEATERBOOK_API_KEY, apiKey.trim())
+    }
 }

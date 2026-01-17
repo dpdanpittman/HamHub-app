@@ -109,10 +109,12 @@ class RepeaterViewModel @Inject constructor(
                 val response = when (state.searchType) {
                     SearchType.STATE -> {
                         if (state.stateQuery.isBlank()) {
-                            throw IllegalArgumentException("Please enter a state")
+                            throw IllegalArgumentException("Please enter a state (e.g., TX, CA)")
                         }
+                        val stateId = RepeaterBookApi.getStateId(state.stateQuery.trim())
+                            ?: throw IllegalArgumentException("Invalid state abbreviation: ${state.stateQuery}")
                         repeaterBookApi.searchByState(
-                            state = state.stateQuery.trim(),
+                            stateId = stateId,
                             city = state.cityQuery.trim().takeIf { it.isNotBlank() }
                         )
                     }
@@ -132,15 +134,19 @@ class RepeaterViewModel @Inject constructor(
                         if (state.callsignQuery.isBlank()) {
                             throw IllegalArgumentException("Please enter a callsign")
                         }
-                        repeaterBookApi.searchByCallsign(state.callsignQuery.trim().uppercase())
+                        repeaterBookApi.searchByCallsign(
+                            callsign = state.callsignQuery.trim().uppercase()
+                        )
                     }
                     SearchType.FREQUENCY -> {
                         if (state.frequencyQuery.isBlank()) {
                             throw IllegalArgumentException("Please enter a frequency")
                         }
+                        val stateId = state.stateQuery.trim().takeIf { it.isNotBlank() }
+                            ?.let { RepeaterBookApi.getStateId(it) }
                         repeaterBookApi.searchByFrequency(
                             frequency = state.frequencyQuery.trim(),
-                            state = state.stateQuery.trim().takeIf { it.isNotBlank() }
+                            stateId = stateId
                         )
                     }
                 }
