@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.hamhub.app.ui.screens.adif.AdifScreen
 import com.hamhub.app.ui.screens.awards.AwardsScreen
 import com.hamhub.app.ui.screens.bandplan.BandDetailScreen
 import com.hamhub.app.ui.screens.bandplan.BandPlanScreen
@@ -96,6 +97,12 @@ fun HamHubNavHost(
 
         composable(Screen.CallsignLookup.route) {
             CallsignLookupScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.ImportExport.route) {
+            AdifScreen(
                 onBack = { navController.popBackStack() }
             )
         }
