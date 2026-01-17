@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HamHub</string>
+
+    <!-- Navigation -->
+    <string name="nav_logbook">Logbook</string>
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_awards">Awards</string>
+    <string name="nav_map">Map</string>
+    <string name="nav_more">More</string>
+    <string name="nav_propagation">Propagation</string>
+    <string name="nav_iss">ISS Tracker</string>
+    <string name="nav_repeaters">Repeaters</string>
+    <string name="nav_bandplan">Band Plan</string>
+    <string name="nav_callsign">Callsign Lookup</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- QSO Fields -->
+    <string name="qso_date">Date</string>
+    <string name="qso_time">Time (UTC)</string>
+    <string name="qso_callsign">Callsign</string>
+    <string name="qso_frequency">Frequency</string>
+    <string name="qso_band">Band</string>
+    <string name="qso_mode">Mode</string>
+    <string name="qso_rst_sent">RST Sent</string>
+    <string name="qso_rst_received">RST Received</string>
+    <string name="qso_name">Name</string>
+    <string name="qso_qth">QTH</string>
+    <string name="qso_grid">Grid Square</string>
+    <string name="qso_country">Country</string>
+    <string name="qso_state">State</string>
+    <string name="qso_power">Power (W)</string>
+    <string name="qso_notes">Notes</string>
+    <string name="qso_qsl_sent">QSL Sent</string>
+    <string name="qso_qsl_received">QSL Received</string>
+
+    <!-- Actions -->
+    <string name="action_add_qso">Add QSO</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_import">Import ADIF</string>
+    <string name="action_export">Export ADIF</string>
+    <string name="action_search">Search</string>
+    <string name="action_filter">Filter</string>
+
+    <!-- Messages -->
+    <string name="msg_qso_saved">QSO saved</string>
+    <string name="msg_qso_deleted">QSO deleted</string>
+    <string name="msg_import_success">Imported %d QSOs</string>
+    <string name="msg_export_success">Exported %d QSOs</string>
+    <string name="msg_no_qsos">No QSOs yet. Add your first contact!</string>
+    <string name="msg_loading">Loading…</string>
+    <string name="msg_error">An error occurred</string>
+    <string name="msg_no_internet">No internet connection</string>
+
+    <!-- Confirm dialogs -->
+    <string name="confirm_delete_title">Delete QSO?</string>
+    <string name="confirm_delete_message">This action cannot be undone.</string>
+
+    <!-- Awards -->
+    <string name="awards_dxcc">DXCC Progress</string>
+    <string name="awards_was">Worked All States</string>
+    <string name="awards_grids">Grid Squares</string>
+    <string name="awards_worked">Worked</string>
+    <string name="awards_confirmed">Confirmed</string>
+
+    <!-- Settings -->
+    <string name="settings_callsign">My Callsign</string>
+    <string name="settings_grid">My Grid Square</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_about">About HamHub</string>
+</resources>
