@@ -16,7 +16,7 @@ import com.hamhub.app.data.local.entity.SettingsEntity
         AwardEntity::class
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = false
 )
 abstract class HamHubDatabase : RoomDatabase() {
 
