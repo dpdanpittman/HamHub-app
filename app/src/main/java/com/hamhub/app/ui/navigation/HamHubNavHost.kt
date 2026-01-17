@@ -20,6 +20,11 @@ import com.hamhub.app.ui.screens.map.MapScreen
 import com.hamhub.app.ui.screens.more.MoreScreen
 import com.hamhub.app.ui.screens.propagation.PropagationScreen
 import com.hamhub.app.ui.screens.repeaters.RepeatersScreen
+import com.hamhub.app.ui.screens.resources.ResourcesScreen
+import com.hamhub.app.ui.screens.otherservices.OtherServicesScreen
+import com.hamhub.app.ui.screens.calculators.CalculatorsScreen
+import com.hamhub.app.ui.screens.contests.ContestsScreen
+import com.hamhub.app.ui.screens.news.NewsScreen
 import com.hamhub.app.ui.screens.settings.SettingsScreen
 
 @Composable
@@ -97,6 +102,36 @@ fun HamHubNavHost(
 
         composable(Screen.CallsignLookup.route) {
             CallsignLookupScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Resources.route) {
+            ResourcesScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.OtherServices.route) {
+            OtherServicesScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Calculators.route) {
+            CalculatorsScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Contests.route) {
+            ContestsScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.News.route) {
+            NewsScreen(
                 onBack = { navController.popBackStack() }
             )
         }

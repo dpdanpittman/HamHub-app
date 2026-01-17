@@ -1,9 +1,16 @@
 package com.hamhub.app.ui.screens.iss
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Satellite
 import androidx.compose.material3.*
@@ -13,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,8 +57,10 @@ fun IssTrackerScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { viewModel.refresh() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                    if (uiState.apiKeyConfigured) {
+                        IconButton(onClick = { viewModel.refresh() }) {
+                            Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -65,6 +76,12 @@ fun IssTrackerScreen(
                 .padding(paddingValues)
         ) {
             when {
+                !uiState.apiKeyConfigured -> {
+                    ApiKeySetupScreen(
+                        onSaveApiKey = { viewModel.saveApiKey(it) },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
                 uiState.isLoading && uiState.lastUpdate == 0L -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
@@ -117,7 +134,7 @@ fun IssTrackerScreen(
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    text = "ISS Position",
+                                    text = uiState.satName,
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -150,6 +167,15 @@ fun IssTrackerScreen(
                                         fontWeight = FontWeight.Medium
                                     )
                                 }
+                            }
+
+                            if (uiState.altitude > 0) {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Altitude: %.1f km".format(uiState.altitude),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
 
                             Spacer(modifier = Modifier.height(8.dp))
@@ -219,13 +245,119 @@ fun IssTrackerScreen(
 }
 
 @Composable
+private fun ApiKeySetupScreen(
+    onSaveApiKey: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var apiKey by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    Column(
+        modifier = modifier
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Icon(
+            Icons.Default.Satellite,
+            contentDescription = null,
+            modifier = Modifier.size(64.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+
+        Text(
+            text = "ISS Tracker Setup",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
+
+        Text(
+            text = "To track the International Space Station, you need a free API key from N2YO.com",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "How to get your API key:",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "1. Visit n2yo.com and create a free account\n" +
+                           "2. Go to your profile and find the API section\n" +
+                           "3. Copy your API key and paste it below",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+
+        OutlinedButton(
+            onClick = {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.n2yo.com/api/"))
+                context.startActivity(intent)
+            }
+        ) {
+            Icon(
+                Icons.AutoMirrored.Filled.OpenInNew,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Get API Key at N2YO.com")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = apiKey,
+            onValueChange = { apiKey = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("N2YO API Key") },
+            placeholder = { Text("Paste your API key here") },
+            leadingIcon = {
+                Icon(Icons.Default.Key, contentDescription = null)
+            },
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+        )
+
+        Button(
+            onClick = { onSaveApiKey(apiKey) },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = apiKey.isNotBlank()
+        ) {
+            Text("Save API Key & Start Tracking")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "The free tier allows 1000 API calls per hour, which is plenty for tracking.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
 private fun IssMapView(
     latitude: Double,
     longitude: Double,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
     AndroidView(
         factory = { ctx ->
             MapView(ctx).apply {

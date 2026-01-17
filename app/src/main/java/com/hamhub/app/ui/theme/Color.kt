@@ -2,39 +2,39 @@ package com.hamhub.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Primary colors - Ham radio inspired blue
-val Primary = Color(0xFF1565C0)
-val PrimaryLight = Color(0xFF5E92F3)
-val PrimaryDark = Color(0xFF003C8F)
+// Primary colors - Tailwind blue palette (matching web app)
+val Primary = Color(0xFF1D4ED8)         // Tailwind blue-700
+val PrimaryLight = Color(0xFF3B82F6)    // Tailwind blue-500
+val PrimaryDark = Color(0xFF1E3A8A)     // Tailwind blue-900
 val OnPrimary = Color.White
 
-// Secondary colors - Accent orange (like signal meters)
-val Secondary = Color(0xFFFF6F00)
-val SecondaryLight = Color(0xFFFFA040)
-val SecondaryDark = Color(0xFFC43E00)
-val OnSecondary = Color.Black
+// Secondary colors - Subtle blue (removed orange)
+val Secondary = Color(0xFF3B82F6)       // Tailwind blue-500
+val SecondaryLight = Color(0xFF60A5FA)  // Tailwind blue-400
+val SecondaryDark = Color(0xFF2563EB)   // Tailwind blue-600
+val OnSecondary = Color.White
 
-// Tertiary colors
-val Tertiary = Color(0xFF00897B)
-val TertiaryLight = Color(0xFF4DB6A9)
-val TertiaryDark = Color(0xFF005B4F)
+// Tertiary colors - Emerald for accents
+val Tertiary = Color(0xFF10B981)        // Tailwind emerald-500
+val TertiaryLight = Color(0xFF34D399)   // Tailwind emerald-400
+val TertiaryDark = Color(0xFF059669)    // Tailwind emerald-600
 val OnTertiary = Color.White
 
-// Background and surface colors
-val Background = Color(0xFFFFFBFE)
-val Surface = Color(0xFFFFFBFE)
-val SurfaceVariant = Color(0xFFE7E0EC)
-val OnBackground = Color(0xFF1C1B1F)
-val OnSurface = Color(0xFF1C1B1F)
-val OnSurfaceVariant = Color(0xFF49454F)
+// Background and surface colors - Gray tones (matching web app)
+val Background = Color(0xFFF3F4F6)      // Tailwind gray-100
+val Surface = Color(0xFFFFFFFF)         // White
+val SurfaceVariant = Color(0xFFE5E7EB)  // Tailwind gray-200
+val OnBackground = Color(0xFF1F2937)    // Tailwind gray-800
+val OnSurface = Color(0xFF1F2937)       // Tailwind gray-800
+val OnSurfaceVariant = Color(0xFF4B5563) // Tailwind gray-600
 
 // Dark theme colors
-val BackgroundDark = Color(0xFF1C1B1F)
-val SurfaceDark = Color(0xFF1C1B1F)
-val SurfaceVariantDark = Color(0xFF49454F)
-val OnBackgroundDark = Color(0xFFE6E1E5)
-val OnSurfaceDark = Color(0xFFE6E1E5)
-val OnSurfaceVariantDark = Color(0xFFCAC4D0)
+val BackgroundDark = Color(0xFF111827)  // Tailwind gray-900
+val SurfaceDark = Color(0xFF1F2937)     // Tailwind gray-800
+val SurfaceVariantDark = Color(0xFF374151) // Tailwind gray-700
+val OnBackgroundDark = Color(0xFFF3F4F6)   // Tailwind gray-100
+val OnSurfaceDark = Color(0xFFF3F4F6)      // Tailwind gray-100
+val OnSurfaceVariantDark = Color(0xFFD1D5DB) // Tailwind gray-300
 
 // Status colors
 val Success = Color(0xFF4CAF50)

@@ -1,7 +1,9 @@
 package com.hamhub.app.di
 
 import com.hamhub.app.data.remote.api.CallookApi
+import com.hamhub.app.data.remote.api.ContestsApi
 import com.hamhub.app.data.remote.api.IssApi
+import com.hamhub.app.data.remote.api.NewsApi
 import com.hamhub.app.data.remote.api.PropagationApi
 import com.hamhub.app.data.remote.api.RepeaterBookApi
 import dagger.Module
@@ -56,10 +58,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @Named("iss")
-    fun provideIssRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    @Named("n2yo")
+    fun provideN2yoRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://api.open-notify.org/")
+            .baseUrl("https://api.n2yo.com/rest/v1/satellite/")
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
@@ -67,7 +69,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideIssApi(@Named("iss") retrofit: Retrofit): IssApi {
+    fun provideIssApi(@Named("n2yo") retrofit: Retrofit): IssApi {
         return retrofit.create(IssApi::class.java)
     }
 
@@ -103,5 +105,39 @@ object NetworkModule {
     @Singleton
     fun provideRepeaterBookApi(@Named("repeaterbook") retrofit: Retrofit): RepeaterBookApi {
         return retrofit.create(RepeaterBookApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @Named("contestcalendar")
+    fun provideContestCalendarRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://www.contestcalendar.com/")
+            .client(okHttpClient)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideContestsApi(@Named("contestcalendar") retrofit: Retrofit): ContestsApi {
+        return retrofit.create(ContestsApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @Named("arrl")
+    fun provideArrlRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://www.arrl.org/")
+            .client(okHttpClient)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNewsApi(@Named("arrl") retrofit: Retrofit): NewsApi {
+        return retrofit.create(NewsApi::class.java)
     }
 }

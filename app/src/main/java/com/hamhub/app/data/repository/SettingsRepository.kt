@@ -67,4 +67,13 @@ class SettingsRepository @Inject constructor(
     suspend fun clearAllSettings() {
         settingsDao.deleteAllSettings()
     }
+
+    // N2YO API Key
+    suspend fun getN2yoApiKey(): String? = settingsDao.getSettingValue(SettingsDao.KEY_N2YO_API_KEY)
+
+    fun getN2yoApiKeyFlow(): Flow<String?> = settingsDao.getSettingValueFlow(SettingsDao.KEY_N2YO_API_KEY)
+
+    suspend fun setN2yoApiKey(apiKey: String) {
+        settingsDao.setSetting(SettingsDao.KEY_N2YO_API_KEY, apiKey.trim())
+    }
 }

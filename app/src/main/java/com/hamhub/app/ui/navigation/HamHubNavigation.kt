@@ -23,6 +23,11 @@ sealed class Screen(
     data object Repeaters : Screen("repeaters", "Repeaters", Icons.Default.CellTower)
     data object BandPlan : Screen("bandplan", "Band Plan", Icons.Default.TableChart)
     data object CallsignLookup : Screen("callsign", "Callsign Lookup", Icons.Default.Search)
+    data object Resources : Screen("resources", "Resources", Icons.Default.MenuBook)
+    data object Calculators : Screen("calculators", "Calculators", Icons.Default.Calculate)
+    data object OtherServices : Screen("other_services", "Other Services", Icons.Default.Radio)
+    data object Contests : Screen("contests", "Contests", Icons.Default.EmojiEvents)
+    data object News : Screen("news", "News", Icons.Default.Newspaper)
     data object ImportExport : Screen("import_export", "Import / Export", Icons.Default.SwapVert)
     data object Settings : Screen("settings", "Settings", Icons.Default.Settings)
 
@@ -47,6 +52,11 @@ sealed class Screen(
             Repeaters,
             BandPlan,
             CallsignLookup,
+            Resources,
+            Calculators,
+            OtherServices,
+            Contests,
+            News,
             ImportExport,
             Settings
         )
