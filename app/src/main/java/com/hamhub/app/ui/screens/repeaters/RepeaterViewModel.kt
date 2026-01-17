@@ -1,0 +1,166 @@
+package com.hamhub.app.ui.screens.repeaters
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.hamhub.app.data.remote.api.RepeaterBookApi
+import com.hamhub.app.data.remote.dto.Repeater
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+enum class SearchType {
+    STATE,
+    LOCATION,
+    CALLSIGN,
+    FREQUENCY
+}
+
+data class RepeaterUiState(
+    val searchType: SearchType = SearchType.STATE,
+    val stateQuery: String = "",
+    val cityQuery: String = "",
+    val callsignQuery: String = "",
+    val frequencyQuery: String = "",
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val distance: Int = 50,
+    val results: List<Repeater> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val hasSearched: Boolean = false,
+    val selectedBandFilter: String? = null,
+    val selectedModeFilter: String? = null
+)
+
+@HiltViewModel
+class RepeaterViewModel @Inject constructor(
+    private val repeaterBookApi: RepeaterBookApi
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(RepeaterUiState())
+    val uiState: StateFlow<RepeaterUiState> = _uiState.asStateFlow()
+
+    fun setSearchType(type: SearchType) {
+        _uiState.value = _uiState.value.copy(searchType = type)
+    }
+
+    fun updateStateQuery(query: String) {
+        _uiState.value = _uiState.value.copy(stateQuery = query)
+    }
+
+    fun updateCityQuery(query: String) {
+        _uiState.value = _uiState.value.copy(cityQuery = query)
+    }
+
+    fun updateCallsignQuery(query: String) {
+        _uiState.value = _uiState.value.copy(callsignQuery = query)
+    }
+
+    fun updateFrequencyQuery(query: String) {
+        _uiState.value = _uiState.value.copy(frequencyQuery = query)
+    }
+
+    fun updateLocation(lat: Double, lon: Double) {
+        _uiState.value = _uiState.value.copy(latitude = lat, longitude = lon)
+    }
+
+    fun updateDistance(distance: Int) {
+        _uiState.value = _uiState.value.copy(distance = distance)
+    }
+
+    fun setBandFilter(band: String?) {
+        _uiState.value = _uiState.value.copy(selectedBandFilter = band)
+    }
+
+    fun setModeFilter(mode: String?) {
+        _uiState.value = _uiState.value.copy(selectedModeFilter = mode)
+    }
+
+    val filteredResults: List<Repeater>
+        get() {
+            val state = _uiState.value
+            var results = state.results
+
+            state.selectedBandFilter?.let { band ->
+                results = results.filter { it.band == band }
+            }
+
+            state.selectedModeFilter?.let { mode ->
+                results = results.filter { it.modes.contains(mode) }
+            }
+
+            return results
+        }
+
+    fun search() {
+        val state = _uiState.value
+
+        viewModelScope.launch {
+            _uiState.value = state.copy(
+                isLoading = true,
+                error = null,
+                hasSearched = true
+            )
+
+            try {
+                val response = when (state.searchType) {
+                    SearchType.STATE -> {
+                        if (state.stateQuery.isBlank()) {
+                            throw IllegalArgumentException("Please enter a state")
+                        }
+                        repeaterBookApi.searchByState(
+                            state = state.stateQuery.trim(),
+                            city = state.cityQuery.trim().takeIf { it.isNotBlank() }
+                        )
+                    }
+                    SearchType.LOCATION -> {
+                        val lat = state.latitude
+                        val lon = state.longitude
+                        if (lat == null || lon == null) {
+                            throw IllegalArgumentException("Location not available")
+                        }
+                        repeaterBookApi.searchByLocation(
+                            latitude = lat,
+                            longitude = lon,
+                            distance = state.distance
+                        )
+                    }
+                    SearchType.CALLSIGN -> {
+                        if (state.callsignQuery.isBlank()) {
+                            throw IllegalArgumentException("Please enter a callsign")
+                        }
+                        repeaterBookApi.searchByCallsign(state.callsignQuery.trim().uppercase())
+                    }
+                    SearchType.FREQUENCY -> {
+                        if (state.frequencyQuery.isBlank()) {
+                            throw IllegalArgumentException("Please enter a frequency")
+                        }
+                        repeaterBookApi.searchByFrequency(
+                            frequency = state.frequencyQuery.trim(),
+                            state = state.stateQuery.trim().takeIf { it.isNotBlank() }
+                        )
+                    }
+                }
+
+                _uiState.value = _uiState.value.copy(
+                    results = response.results,
+                    isLoading = false,
+                    error = if (response.results.isEmpty()) "No repeaters found" else null
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    results = emptyList(),
+                    isLoading = false,
+                    error = e.message ?: "Search failed"
+                )
+            }
+        }
+    }
+
+    fun clear() {
+        _uiState.value = RepeaterUiState()
+    }
+}
