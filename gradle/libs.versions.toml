@@ -34,6 +34,9 @@ datastorePreferences = "1.1.1"
 # Security
 securityCrypto = "1.1.0-alpha06"
 
+# Splash Screen
+splashScreen = "1.0.1"
+
 # Testing
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -91,6 +94,9 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 
 # Security
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
+
+# Splash Screen
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }

@@ -10,4 +10,12 @@
         <item name="android:windowLightNavigationBar">true</item>
     </style>
 
+    <!-- Splash Screen Theme -->
+    <style name="Theme.HamHub.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#1976D2</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/avd_splash_icon</item>
+        <item name="windowSplashScreenAnimationDuration">2000</item>
+        <item name="postSplashScreenTheme">@style/Theme.HamHub</item>
+    </style>
+
 </resources>

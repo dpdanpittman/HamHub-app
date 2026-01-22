@@ -2,25 +2,31 @@ package com.hamhub.app.ui.screens.logbook
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hamhub.app.R
 import com.hamhub.app.domain.model.Band
+import com.hamhub.app.domain.model.Country
 import com.hamhub.app.domain.model.Mode
+import com.hamhub.app.domain.model.UsState
+import com.hamhub.app.ui.components.CompactHeader
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditQsoScreen(
     qsoId: Long?,
@@ -43,21 +49,10 @@ fun AddEditQsoScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        if (isEdit) stringResource(R.string.action_edit)
-                        else stringResource(R.string.action_add_qso)
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.action_cancel)
-                        )
-                    }
-                },
+            CompactHeader(
+                title = if (isEdit) stringResource(R.string.action_edit)
+                        else stringResource(R.string.action_add_qso),
+                onBack = onBack,
                 actions = {
                     IconButton(
                         onClick = {
@@ -72,14 +67,11 @@ fun AddEditQsoScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Check,
-                            contentDescription = stringResource(R.string.action_save)
+                            contentDescription = stringResource(R.string.action_save),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                }
             )
         }
     ) { paddingValues ->
@@ -114,16 +106,44 @@ fun AddEditQsoScreen(
                 )
             }
 
-            // Callsign - most important field
+            // Callsign - most important field with auto-lookup
             OutlinedTextField(
                 value = formState.callsign,
                 onValueChange = { viewModel.updateFormField { copy(callsign = it.uppercase()) } },
                 label = { Text(stringResource(R.string.qso_callsign) + " *") },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        if (!focusState.isFocused && formState.callsign.isNotBlank()) {
+                            viewModel.lookupCallsign(formState.callsign)
+                        }
+                    },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Characters
+                    capitalization = KeyboardCapitalization.Characters,
+                    imeAction = ImeAction.Next
                 ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        if (formState.callsign.isNotBlank()) {
+                            viewModel.lookupCallsign(formState.callsign)
+                        }
+                    }
+                ),
+                trailingIcon = {
+                    if (uiState.isLookingUpCallsign) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else if (uiState.callsignLookupResult != null) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Callsign found",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
                 isError = formState.callsign.isBlank()
             )
 
@@ -187,7 +207,10 @@ fun AddEditQsoScreen(
                 onValueChange = { viewModel.updateFormField { copy(name = it) } },
                 label = { Text(stringResource(R.string.qso_name)) },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words
+                )
             )
 
             OutlinedTextField(
@@ -195,7 +218,10 @@ fun AddEditQsoScreen(
                 onValueChange = { viewModel.updateFormField { copy(qth = it) } },
                 label = { Text(stringResource(R.string.qso_qth)) },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words
+                )
             )
 
             Row(
@@ -212,24 +238,16 @@ fun AddEditQsoScreen(
                         capitalization = KeyboardCapitalization.Characters
                     )
                 )
-                OutlinedTextField(
-                    value = formState.state,
-                    onValueChange = { viewModel.updateFormField { copy(state = it.uppercase()) } },
-                    label = { Text(stringResource(R.string.qso_state)) },
-                    modifier = Modifier.weight(1f),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Characters
-                    )
+                StateDropdown(
+                    selectedState = formState.state,
+                    onStateSelected = { viewModel.updateFormField { copy(state = it) } },
+                    modifier = Modifier.weight(1f)
                 )
             }
 
-            OutlinedTextField(
-                value = formState.country,
-                onValueChange = { viewModel.updateFormField { copy(country = it) } },
-                label = { Text(stringResource(R.string.qso_country)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            CountryDropdown(
+                selectedCountry = formState.country,
+                onCountrySelected = { viewModel.updateFormField { copy(country = it) } }
             )
 
             HorizontalDivider()
@@ -281,7 +299,10 @@ fun AddEditQsoScreen(
                 label = { Text(stringResource(R.string.qso_notes)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
-                maxLines = 5
+                maxLines = 5,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences
+                )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -391,6 +412,102 @@ private fun ModeDropdown(
                     text = { Text(mode.display) },
                     onClick = {
                         onModeSelected(mode.display)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun StateDropdown(
+    selectedState: String,
+    onStateSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            value = selectedState,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.qso_state)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            // Empty option
+            DropdownMenuItem(
+                text = { Text("") },
+                onClick = {
+                    onStateSelected("")
+                    expanded = false
+                }
+            )
+            UsState.entries.forEach { state ->
+                DropdownMenuItem(
+                    text = { Text("${state.code} - ${state.fullName}") },
+                    onClick = {
+                        onStateSelected(state.code)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CountryDropdown(
+    selectedCountry: String,
+    onCountrySelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it }
+    ) {
+        OutlinedTextField(
+            value = selectedCountry,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.qso_country)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            // Empty option
+            DropdownMenuItem(
+                text = { Text("") },
+                onClick = {
+                    onCountrySelected("")
+                    expanded = false
+                }
+            )
+            Country.entries.forEach { country ->
+                DropdownMenuItem(
+                    text = { Text("${country.displayName} (${country.prefix})") },
+                    onClick = {
+                        onCountrySelected(country.displayName)
                         expanded = false
                     }
                 )

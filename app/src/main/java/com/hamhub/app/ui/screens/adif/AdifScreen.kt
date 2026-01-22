@@ -5,7 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Share
@@ -22,10 +21,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.hamhub.app.R
 import com.hamhub.app.domain.model.Band
 import com.hamhub.app.domain.model.Mode
+import com.hamhub.app.ui.components.CompactHeader
 import kotlinx.coroutines.launch
 import java.io.File
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AdifScreen(
     onBack: () -> Unit,
@@ -62,17 +62,9 @@ fun AdifScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Import / Export") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+            CompactHeader(
+                title = "Import / Export",
+                onBack = onBack
             )
         }
     ) { paddingValues ->

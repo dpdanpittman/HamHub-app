@@ -87,12 +87,20 @@ fun HamHubTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            // statusBarColor is deprecated in API 35+, system handles it automatically
-            @Suppress("DEPRECATION")
+            val insetsController = WindowCompat.getInsetsController(window, view)
+
+            // For Android 15+ (SDK 35), the system handles edge-to-edge automatically
+            // For older versions, we set the status bar color manually
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                @Suppress("DEPRECATION")
                 window.statusBarColor = colorScheme.primary.toArgb()
+                @Suppress("DEPRECATION")
+                window.navigationBarColor = colorScheme.surface.toArgb()
             }
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+
+            // Set status bar icon colors based on theme
+            insetsController.isAppearanceLightStatusBars = !darkTheme
+            insetsController.isAppearanceLightNavigationBars = !darkTheme
         }
     }
 

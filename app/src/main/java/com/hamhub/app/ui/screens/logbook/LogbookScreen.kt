@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.hamhub.app.R
 import com.hamhub.app.domain.model.Band
 import com.hamhub.app.domain.model.Mode
+import com.hamhub.app.ui.components.CompactHeader
 import com.hamhub.app.ui.components.QsoCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,12 +34,8 @@ fun LogbookScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.nav_logbook)) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
+            CompactHeader(
+                title = stringResource(R.string.nav_logbook),
                 actions = {
                     IconButton(onClick = { showFilterSheet = true }) {
                         Badge(
@@ -55,7 +52,8 @@ fun LogbookScreen(
                         }
                         Icon(
                             imageVector = Icons.Default.FilterList,
-                            contentDescription = stringResource(R.string.action_filter)
+                            contentDescription = stringResource(R.string.action_filter),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 }

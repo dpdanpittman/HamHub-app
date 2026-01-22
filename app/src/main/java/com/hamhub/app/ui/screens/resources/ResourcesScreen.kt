@@ -1,6 +1,7 @@
 package com.hamhub.app.ui.screens.resources
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -10,8 +11,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
+import com.hamhub.app.ui.components.CompactHeader
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,11 +21,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.hamhub.app.R
 import com.hamhub.app.domain.model.ResourcesData
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ResourcesScreen(
     onBack: () -> Unit
@@ -35,17 +38,9 @@ fun ResourcesScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.nav_resources)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+            CompactHeader(
+                title = stringResource(R.string.nav_resources),
+                onBack = onBack
             )
         }
     ) { paddingValues ->
@@ -220,6 +215,50 @@ private fun MorseCodeTab() {
 
 @Composable
 private fun MorseGrid(items: List<Pair<String, String>>) {
+    var selectedItem by remember { mutableStateOf<Pair<String, String>?>(null) }
+
+    // Enlarged view dialog
+    selectedItem?.let { (char, morse) ->
+        Dialog(onDismissRequest = { selectedItem = null }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { selectedItem = null },
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = char,
+                        fontSize = 72.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = morse,
+                        fontSize = 36.sp,
+                        fontFamily = FontFamily.Monospace,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = "Tap anywhere to close",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+    }
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         modifier = Modifier.height(((items.size / 4 + 1) * 60).dp),
@@ -229,6 +268,7 @@ private fun MorseGrid(items: List<Pair<String, String>>) {
     ) {
         items(items) { (char, morse) ->
             Card(
+                modifier = Modifier.clickable { selectedItem = char to morse },
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )

@@ -22,12 +22,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hamhub.app.R
+import com.hamhub.app.ui.components.CompactHeader
 import com.hamhub.app.data.repository.DxccProgress
 import com.hamhub.app.data.repository.GridProgress
 import com.hamhub.app.data.repository.WasProgress
 import com.hamhub.app.domain.model.UsState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AwardsScreen(
     viewModel: AwardsViewModel = hiltViewModel()
@@ -37,12 +37,8 @@ fun AwardsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.nav_awards)) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+            CompactHeader(
+                title = stringResource(R.string.nav_awards)
             )
         }
     ) { paddingValues ->

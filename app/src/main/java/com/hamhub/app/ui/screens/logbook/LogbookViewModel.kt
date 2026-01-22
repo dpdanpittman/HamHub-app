@@ -3,6 +3,8 @@ package com.hamhub.app.ui.screens.logbook
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hamhub.app.data.local.entity.QsoEntity
+import com.hamhub.app.data.remote.api.CallookApi
+import com.hamhub.app.data.remote.dto.CallookResponse
 import com.hamhub.app.data.repository.QsoRepository
 import com.hamhub.app.domain.model.Band
 import com.hamhub.app.domain.model.Mode
@@ -23,7 +25,9 @@ data class LogbookUiState(
     val selectedModeFilter: String? = null,
     val showDeleteConfirmation: Boolean = false,
     val qsoToDelete: QsoEntity? = null,
-    val duplicateWarning: QsoEntity? = null
+    val duplicateWarning: QsoEntity? = null,
+    val isLookingUpCallsign: Boolean = false,
+    val callsignLookupResult: CallookResponse? = null
 )
 
 data class QsoFormState(
@@ -102,7 +106,8 @@ data class QsoFormState(
 
 @HiltViewModel
 class LogbookViewModel @Inject constructor(
-    private val qsoRepository: QsoRepository
+    private val qsoRepository: QsoRepository,
+    private val callookApi: CallookApi
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LogbookUiState())
@@ -114,6 +119,9 @@ class LogbookViewModel @Inject constructor(
     private val searchQuery = MutableStateFlow("")
     private val bandFilter = MutableStateFlow<String?>(null)
     private val modeFilter = MutableStateFlow<String?>(null)
+
+    private var callsignLookupJob: kotlinx.coroutines.Job? = null
+    private var lastLookedUpCallsign: String = ""
 
     init {
         loadQsos()
@@ -190,7 +198,8 @@ class LogbookViewModel @Inject constructor(
 
     fun initNewQso() {
         _formState.value = QsoFormState()
-        _uiState.update { it.copy(duplicateWarning = null) }
+        _uiState.update { it.copy(duplicateWarning = null, callsignLookupResult = null) }
+        lastLookedUpCallsign = ""
     }
 
     fun loadQsoForEdit(qsoId: Long) {
@@ -203,6 +212,80 @@ class LogbookViewModel @Inject constructor(
 
     fun updateFormField(update: QsoFormState.() -> QsoFormState) {
         _formState.update { it.update() }
+    }
+
+    /**
+     * Looks up a callsign and auto-fills form fields with the result.
+     * Call this when the callsign field loses focus or after a delay.
+     */
+    fun lookupCallsign(callsign: String) {
+        val trimmedCallsign = callsign.trim().uppercase()
+
+        // Skip if callsign is too short or already looked up
+        if (trimmedCallsign.length < 3 || trimmedCallsign == lastLookedUpCallsign) {
+            return
+        }
+
+        // Cancel any pending lookup
+        callsignLookupJob?.cancel()
+
+        callsignLookupJob = viewModelScope.launch {
+            _uiState.update { it.copy(isLookingUpCallsign = true) }
+
+            try {
+                val result = callookApi.lookupCallsign(trimmedCallsign)
+
+                if (result.status == "VALID") {
+                    lastLookedUpCallsign = trimmedCallsign
+                    _uiState.update { it.copy(callsignLookupResult = result) }
+
+                    // Auto-fill form fields from lookup result
+                    _formState.update { currentForm ->
+                        currentForm.copy(
+                            name = if (currentForm.name.isBlank()) result.name else currentForm.name,
+                            gridSquare = if (currentForm.gridSquare.isBlank())
+                                result.location?.gridsquare?.uppercase() ?: "" else currentForm.gridSquare,
+                            qth = if (currentForm.qth.isBlank())
+                                extractQth(result) else currentForm.qth,
+                            state = if (currentForm.state.isBlank())
+                                extractState(result) else currentForm.state,
+                            country = if (currentForm.country.isBlank())
+                                "United States" else currentForm.country
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                // Silently fail - lookup is optional enhancement
+            } finally {
+                _uiState.update { it.copy(isLookingUpCallsign = false) }
+            }
+        }
+    }
+
+    private fun extractQth(result: CallookResponse): String {
+        // Extract city/state from address line 2 (typically "CITY, ST 12345")
+        val line2 = result.address?.line2 ?: return ""
+        return line2.split(",").firstOrNull()?.trim() ?: ""
+    }
+
+    private fun extractState(result: CallookResponse): String {
+        // Extract state from address line 2 (typically "CITY, ST 12345")
+        val line2 = result.address?.line2 ?: return ""
+        val parts = line2.split(",")
+        if (parts.size >= 2) {
+            // Second part is typically "ST 12345"
+            val stateZip = parts[1].trim()
+            val state = stateZip.split(" ").firstOrNull() ?: ""
+            if (state.length == 2 && state.all { it.isLetter() }) {
+                return state.uppercase()
+            }
+        }
+        return ""
+    }
+
+    fun clearCallsignLookup() {
+        lastLookedUpCallsign = ""
+        _uiState.update { it.copy(callsignLookupResult = null) }
     }
 
     suspend fun saveQso(existingId: Long? = null): Boolean {

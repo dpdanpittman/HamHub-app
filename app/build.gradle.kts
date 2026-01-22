@@ -35,8 +35,8 @@ android {
         applicationId = "com.hamhub.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 5
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -153,6 +153,9 @@ dependencies {
 
     // Security (for encrypted storage)
     implementation(libs.security.crypto)
+
+    // Splash Screen
+    implementation(libs.androidx.core.splashscreen)
 
     // Testing
     testImplementation(libs.junit)

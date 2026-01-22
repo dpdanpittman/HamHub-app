@@ -44,5 +44,6 @@ interface SettingsDao {
         const val KEY_DEFAULT_BAND = "default_band"
         const val KEY_N2YO_API_KEY = "n2yo_api_key"
         const val KEY_REPEATERBOOK_API_KEY = "repeaterbook_api_key"
+        const val KEY_RECENT_CALLSIGN_SEARCHES = "recent_callsign_searches"
     }
 }

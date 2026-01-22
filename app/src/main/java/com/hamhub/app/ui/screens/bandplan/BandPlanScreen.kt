@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material3.*
@@ -19,9 +18,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hamhub.app.R
 import com.hamhub.app.domain.model.BandPlan
+import com.hamhub.app.ui.components.CompactHeader
 import com.hamhub.app.domain.model.BandPlanData
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BandPlanScreen(
     onBandClick: (String) -> Unit,
@@ -32,17 +31,9 @@ fun BandPlanScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.nav_bandplan)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+            CompactHeader(
+                title = stringResource(R.string.nav_bandplan),
+                onBack = onBack
             )
         }
     ) { paddingValues ->

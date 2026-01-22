@@ -19,13 +19,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hamhub.app.R
+import com.hamhub.app.ui.components.CompactHeader
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
     viewModel: MapViewModel = hiltViewModel()
@@ -40,12 +40,8 @@ fun MapScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.nav_map)) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+            CompactHeader(
+                title = stringResource(R.string.nav_map)
             )
         }
     ) { paddingValues ->
@@ -169,6 +165,17 @@ private fun OsmdroidMapView(
                 setTileSource(TileSourceFactory.MAPNIK)
                 setMultiTouchControls(true)
 
+                // Set zoom limits to prevent zooming past the planet
+                minZoomLevel = 2.0
+                maxZoomLevel = 18.0
+
+                // Prevent horizontal scrolling past the world boundaries
+                isHorizontalMapRepetitionEnabled = false
+                isVerticalMapRepetitionEnabled = false
+                setScrollableAreaLimitDouble(
+                    org.osmdroid.util.BoundingBox(85.0, 180.0, -85.0, -180.0)
+                )
+
                 // Set initial view to show the world
                 controller.setZoom(3.0)
                 controller.setCenter(GeoPoint(20.0, 0.0))
@@ -210,18 +217,29 @@ private fun OsmdroidMapView(
             // Refresh the map
             mapView.invalidate()
 
-            // If we have markers, zoom to fit them (but cap at state-level view)
+            // If we have markers, zoom to fit them (but cap zoom level for better view)
             if (markers.isNotEmpty()) {
                 val boundingBox = org.osmdroid.util.BoundingBox.fromGeoPoints(
                     markers.map { GeoPoint(it.latitude, it.longitude) }
                 )
                 mapView.post {
                     try {
-                        mapView.zoomToBoundingBox(boundingBox, true, 50)
-                        // Cap zoom at state-level (7.0) so it doesn't zoom in too close
-                        // User can manually zoom in if they want more detail
-                        if (mapView.zoomLevelDouble > 7.0) {
-                            mapView.controller.setZoom(7.0)
+                        // For single markers or nearby clusters, show regional view
+                        // For spread out markers, fit them all in view
+                        if (markers.size == 1) {
+                            // Single marker - show regional context (state/country level)
+                            mapView.controller.setCenter(GeoPoint(markers[0].latitude, markers[0].longitude))
+                            mapView.controller.setZoom(5.0)
+                        } else {
+                            mapView.zoomToBoundingBox(boundingBox, true, 100)
+                            // Cap zoom so we don't zoom in too close on nearby contacts
+                            if (mapView.zoomLevelDouble > 6.0) {
+                                mapView.controller.setZoom(6.0)
+                            }
+                            // Ensure minimum zoom if markers are very spread out
+                            if (mapView.zoomLevelDouble < 2.0) {
+                                mapView.controller.setZoom(2.0)
+                            }
                         }
                     } catch (e: Exception) {
                         // Fallback if zoom fails
