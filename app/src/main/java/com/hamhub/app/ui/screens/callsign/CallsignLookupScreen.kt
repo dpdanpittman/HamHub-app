@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.hamhub.app.R
 import com.hamhub.app.data.remote.dto.CallookResponse
 import com.hamhub.app.ui.components.CompactHeader
+import com.hamhub.app.ui.components.SaveToSpotterDialog
 
 @Composable
 fun CallsignLookupScreen(
@@ -34,6 +35,15 @@ fun CallsignLookupScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Show snackbar when save succeeds
+    LaunchedEffect(uiState.saveSuccess) {
+        uiState.saveSuccess?.let { message ->
+            snackbarHostState.showSnackbar(message)
+            viewModel.clearSaveSuccess()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -41,7 +51,8 @@ fun CallsignLookupScreen(
                 title = stringResource(R.string.nav_callsign),
                 onBack = onBack
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -159,6 +170,7 @@ fun CallsignLookupScreen(
                     uiState.result?.let { result ->
                         CallsignResultCard(
                             result = result,
+                            onSaveToList = { viewModel.showSaveToListDialog() },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp)
@@ -216,11 +228,23 @@ fun CallsignLookupScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+
+    // Save to List Dialog
+    if (uiState.showSaveToListDialog && uiState.result != null) {
+        SaveToSpotterDialog(
+            callsign = uiState.result?.current?.callsign ?: "",
+            lists = uiState.spotterLists,
+            onDismiss = { viewModel.hideSaveToListDialog() },
+            onSaveToList = { listId -> viewModel.saveToList(listId) },
+            onCreateNewList = { listName -> viewModel.createListAndSave(listName) }
+        )
+    }
 }
 
 @Composable
 private fun CallsignResultCard(
     result: CallookResponse,
+    onSaveToList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier) {
@@ -238,7 +262,7 @@ private fun CallsignResultCard(
                     modifier = Modifier.size(32.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = result.current?.callsign ?: "",
                         style = MaterialTheme.typography.headlineMedium,
@@ -251,6 +275,17 @@ private fun CallsignResultCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+            }
+
+            // Save to List button
+            Spacer(modifier = Modifier.height(12.dp))
+            OutlinedButton(
+                onClick = onSaveToList,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.Visibility, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Save to List")
             }
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))

@@ -6,6 +6,7 @@ import com.hamhub.app.data.local.database.HamHubDatabase
 import com.hamhub.app.data.local.database.dao.AwardsDao
 import com.hamhub.app.data.local.database.dao.QsoDao
 import com.hamhub.app.data.local.database.dao.SettingsDao
+import com.hamhub.app.data.local.database.dao.SpotterDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,9 +28,7 @@ object AppModule {
             HamHubDatabase::class.java,
             HamHubDatabase.DATABASE_NAME
         )
-            // NOTE: For future schema changes, add proper migrations here instead of
-            // using fallbackToDestructiveMigration() which would delete user data.
-            // Example: .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+            .addMigrations(HamHubDatabase.MIGRATION_1_2)
             .build()
     }
 
@@ -49,5 +48,11 @@ object AppModule {
     @Singleton
     fun provideAwardsDao(database: HamHubDatabase): AwardsDao {
         return database.awardsDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSpotterDao(database: HamHubDatabase): SpotterDao {
+        return database.spotterDao()
     }
 }

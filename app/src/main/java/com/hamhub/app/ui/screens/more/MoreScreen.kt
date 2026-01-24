@@ -35,7 +35,7 @@ fun MoreScreen(
         ),
         MenuSection(
             title = "Live Data",
-            items = listOf(Screen.Propagation, Screen.IssTracker, Screen.Repeaters, Screen.CallsignLookup)
+            items = listOf(Screen.Propagation, Screen.IssTracker, Screen.Repeaters, Screen.CallsignLookup, Screen.Spotter)
         ),
         MenuSection(
             title = "Community",
@@ -182,6 +182,7 @@ private fun getScreenDescription(screen: Screen): String {
         Screen.IssTracker -> "Track the International Space Station"
         Screen.Repeaters -> "Find nearby repeaters"
         Screen.CallsignLookup -> "Look up amateur callsigns"
+        Screen.Spotter -> "Save and organize spotted callsigns"
         Screen.Contests -> "Upcoming amateur radio contests"
         Screen.News -> "ARRL news and DX bulletins"
         Screen.ImportExport -> "Import/export ADIF log files"

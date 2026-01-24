@@ -24,6 +24,10 @@ sealed class Screen(
     data object Repeaters : Screen("repeaters", "Repeaters", Icons.Default.CellTower)
     data object BandPlan : Screen("bandplan", "Band Plan", Icons.Default.TableChart)
     data object CallsignLookup : Screen("callsign", "Callsign Lookup", Icons.Default.Search)
+    data object Spotter : Screen("spotter", "Spotter", Icons.Default.Visibility)
+    data object SpotterListDetail : Screen("spotter/{listId}", "Spotter List", Icons.Default.Visibility) {
+        fun createRoute(listId: Long) = "spotter/$listId"
+    }
     data object Resources : Screen("resources", "Resources", Icons.AutoMirrored.Filled.MenuBook)
     data object Calculators : Screen("calculators", "Calculators", Icons.Default.Calculate)
     data object OtherServices : Screen("other_services", "Other Services", Icons.Default.Radio)
@@ -58,6 +62,7 @@ sealed class Screen(
             IssTracker,
             Repeaters,
             CallsignLookup,
+            Spotter,
             Contests,
             News,
             ImportExport,

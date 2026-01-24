@@ -3,6 +3,9 @@ package com.hamhub.app.ui.screens.callsign
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hamhub.app.data.local.database.dao.SettingsDao
+import com.hamhub.app.data.local.database.dao.SpotterDao
+import com.hamhub.app.data.local.entity.SpotterListEntity
+import com.hamhub.app.data.local.entity.SpottedCallsignEntity
 import com.hamhub.app.data.remote.api.CallookApi
 import com.hamhub.app.data.remote.dto.CallookResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,13 +28,17 @@ data class CallsignUiState(
     val error: String? = null,
     val hasSearched: Boolean = false,
     val recentSearches: List<RecentSearch> = emptyList(),
-    val showAllRecentSearches: Boolean = false
+    val showAllRecentSearches: Boolean = false,
+    val showSaveToListDialog: Boolean = false,
+    val spotterLists: List<SpotterListEntity> = emptyList(),
+    val saveSuccess: String? = null
 )
 
 @HiltViewModel
 class CallsignViewModel @Inject constructor(
     private val callookApi: CallookApi,
-    private val settingsDao: SettingsDao
+    private val settingsDao: SettingsDao,
+    private val spotterDao: SpotterDao
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CallsignUiState())
@@ -44,6 +51,7 @@ class CallsignViewModel @Inject constructor(
 
     init {
         loadRecentSearches()
+        loadSpotterLists()
     }
 
     private fun loadRecentSearches() {
@@ -51,6 +59,14 @@ class CallsignViewModel @Inject constructor(
             val searchesJson = settingsDao.getSettingValue(SettingsDao.KEY_RECENT_CALLSIGN_SEARCHES)
             val searches = parseRecentSearches(searchesJson)
             _uiState.value = _uiState.value.copy(recentSearches = searches)
+        }
+    }
+
+    private fun loadSpotterLists() {
+        viewModelScope.launch {
+            spotterDao.getAllLists().collect { lists ->
+                _uiState.value = _uiState.value.copy(spotterLists = lists)
+            }
         }
     }
 
@@ -168,5 +184,95 @@ class CallsignViewModel @Inject constructor(
             hasSearched = false,
             showAllRecentSearches = false
         )
+    }
+
+    // Spotter list functions
+    fun showSaveToListDialog() {
+        _uiState.value = _uiState.value.copy(showSaveToListDialog = true)
+    }
+
+    fun hideSaveToListDialog() {
+        _uiState.value = _uiState.value.copy(showSaveToListDialog = false)
+    }
+
+    fun saveToList(listId: Long) {
+        val result = _uiState.value.result ?: return
+        val callsign = result.current?.callsign ?: return
+
+        viewModelScope.launch {
+            // Check if already in list
+            if (spotterDao.isCallsignInList(listId, callsign)) {
+                _uiState.value = _uiState.value.copy(
+                    showSaveToListDialog = false,
+                    saveSuccess = "$callsign is already in this list"
+                )
+                return@launch
+            }
+
+            val location = buildString {
+                result.address?.let { address ->
+                    if (address.line2.isNotBlank()) {
+                        append(address.line2)
+                    }
+                }
+            }
+
+            val spottedCallsign = SpottedCallsignEntity(
+                listId = listId,
+                callsign = callsign,
+                name = result.name.takeIf { it.isNotBlank() },
+                gridSquare = result.location?.gridsquare?.takeIf { it.isNotBlank() },
+                location = location.takeIf { it.isNotBlank() },
+                operatorClass = result.current?.operClass?.takeIf { it.isNotBlank() }
+            )
+
+            spotterDao.insertCallsign(spottedCallsign)
+
+            val listName = spotterDao.getListById(listId)?.name ?: "list"
+            _uiState.value = _uiState.value.copy(
+                showSaveToListDialog = false,
+                saveSuccess = "$callsign saved to $listName"
+            )
+        }
+    }
+
+    fun createListAndSave(listName: String) {
+        val result = _uiState.value.result ?: return
+        val callsign = result.current?.callsign ?: return
+
+        viewModelScope.launch {
+            // Create the new list
+            val list = SpotterListEntity(name = listName.trim())
+            val listId = spotterDao.insertList(list)
+
+            // Save the callsign to the new list
+            val location = buildString {
+                result.address?.let { address ->
+                    if (address.line2.isNotBlank()) {
+                        append(address.line2)
+                    }
+                }
+            }
+
+            val spottedCallsign = SpottedCallsignEntity(
+                listId = listId,
+                callsign = callsign,
+                name = result.name.takeIf { it.isNotBlank() },
+                gridSquare = result.location?.gridsquare?.takeIf { it.isNotBlank() },
+                location = location.takeIf { it.isNotBlank() },
+                operatorClass = result.current?.operClass?.takeIf { it.isNotBlank() }
+            )
+
+            spotterDao.insertCallsign(spottedCallsign)
+
+            _uiState.value = _uiState.value.copy(
+                showSaveToListDialog = false,
+                saveSuccess = "$callsign saved to $listName"
+            )
+        }
+    }
+
+    fun clearSaveSuccess() {
+        _uiState.value = _uiState.value.copy(saveSuccess = null)
     }
 }

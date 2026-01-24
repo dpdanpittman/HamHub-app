@@ -27,6 +27,8 @@ import com.hamhub.app.ui.screens.contests.ContestsScreen
 import com.hamhub.app.ui.screens.news.NewsScreen
 import com.hamhub.app.ui.screens.guide.GuideScreen
 import com.hamhub.app.ui.screens.settings.SettingsScreen
+import com.hamhub.app.ui.screens.spotter.SpotterScreen
+import com.hamhub.app.ui.screens.spotter.SpotterListDetailScreen
 
 @Composable
 fun HamHubNavHost(
@@ -104,6 +106,30 @@ fun HamHubNavHost(
         composable(Screen.CallsignLookup.route) {
             CallsignLookupScreen(
                 onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Spotter.route) {
+            SpotterScreen(
+                onBack = { navController.popBackStack() },
+                onListClick = { listId ->
+                    navController.navigate(Screen.SpotterListDetail.createRoute(listId))
+                }
+            )
+        }
+
+        composable(
+            route = Screen.SpotterListDetail.route,
+            arguments = listOf(navArgument("listId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val listId = backStackEntry.arguments?.getLong("listId") ?: 0L
+            SpotterListDetailScreen(
+                listId = listId,
+                onBack = { navController.popBackStack() },
+                onCallsignClick = { callsign ->
+                    // Navigate to callsign lookup with the callsign pre-filled
+                    navController.navigate(Screen.CallsignLookup.route)
+                }
             )
         }
 
